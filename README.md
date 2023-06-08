@@ -28,14 +28,14 @@ The approach involves several steps:
 
 ## 🗓️ Project Timeline
 
-The project is planned to be completed over 5 months, with each work package and its associated tasks assigned specific durations. For more detailed information, check the `project_plan.pdf` file in the `docs` folder.
+The project is planned to be completed over 5 months, with each work package and its associated tasks assigned specific durations.
 
 ## 🧑🏻‍💻 Author
 - Student: Giorgio Paoletti
 
 ## 🎓 University's
 - 🇨🇭 FHNW Supervisors: Knut Hinkelmann, Emanuele Laurenzi
-- 🇮🇹 UNICAM Supervisors: Andrea Polini
+- 🇮🇹 UNICAM Supervisor: Andrea Polini
 
 ## 🏢 Microsoft Switzerland
 - External Collaborator: Claudio Mirti
