@@ -1,6 +1,11 @@
 # Optimal Membership Function Selection for Indoor Occupancy Estimation Using Unlabeled Environmental Data
+[![forthebadge](https://forthebadge.com/images/badges/built-with-science.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/powered-by-coffee.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
 
-This repository contains the code and resources for my Master's Thesis project focused on the integration of AI into building automation and energy management systems. The research is done in collaboration with Microsoft Switzerland 🤝 and emphasizes the development of non-intrusive, privacy-preserving solutions for indoor occupancy estimation using fuzzy logic systems.
+This repository contains the code and resources for my Master's Thesis project focused on the integration of AI into building automation and energy management systems. The research is done in collaboration with Microsoft Switzerland and emphasizes the development of non-intrusive, privacy-preserving solutions for indoor occupancy estimation using fuzzy logic systems.
+
+---
 
 ## 📜 Abstract
 
@@ -43,7 +48,3 @@ The project is planned to be completed over 5 months, with each work package and
 ## ⚖️ License
 
 This project is licensed under the MIT License. See the `LICENSE` file for details.
-
----
-
-This project is part of the Master's Thesis for the Autumn 2023 session at UNICAM and FHNW. Graduation Day is set for 25th October 2023. 🎉
