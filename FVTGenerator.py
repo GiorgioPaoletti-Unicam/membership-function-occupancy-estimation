@@ -75,3 +75,46 @@ class GaussianFVTGenerator(AbstractFVTGenerator):
                     sigma
                 )
         return output_memb_function
+
+
+class TriangularFVTGenerator(AbstractFVTGenerator):
+
+        def __init__(self, input_universes, output_universe, mf_params):
+            super().__init__(input_universes, output_universe, mf_params)
+
+        def _generate_input_mf(self):
+            input_memb_functions = {}
+            for nf, feature in enumerate(self._feature_names):
+                input_memb_functions[feature] = {}
+
+                for i in range(len(self._mf_params)):
+                    input_memb_functions[feature]['cluster' + str(i + 1)] = \
+                        fuzz.trimf(
+                            self._input_universes[feature],
+                            [
+                                self._mf_params['cluster' + str(i + 1)]['a'][nf],
+                                self._mf_params['cluster' + str(i + 1)]['b'][nf],
+                                self._mf_params['cluster' + str(i + 1)]['c'][nf]
+                            ]
+                        )
+
+            return input_memb_functions
+
+        def _generate_output_mf(self):
+            output_memb_function = {}
+
+            # Calculate the distance between the centers of each function
+            step_size = (self._output_universe.max() - self._output_universe.min()) / (len(self._mf_params) - 1)
+
+            for i in range(len(self._mf_params)):
+                left = self._output_universe.min() + i * step_size - step_size / 2
+                peak = self._output_universe.min() + i * step_size
+                right = self._output_universe.min() + i * step_size + step_size / 2
+
+                # Make sure the left and right don't go out of the output universe's range
+                left = max(left, self._output_universe.min())
+                right = min(right, self._output_universe.max())
+
+                output_memb_function['cluster' + str(i + 1)] = fuzz.trimf(self._output_universe, [left, peak, right])
+
+            return output_memb_function

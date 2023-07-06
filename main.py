@@ -35,10 +35,6 @@ output_universe = np.arange(0, 101, 1)
     return universes"""
 
 
-def get_feature_names(data):
-    return list(data.columns.values)
-
-
 def read_csv_data(filename):
     # Read data from a CSV file
     data = pd.read_csv(filename, usecols=['date', 'Temperature', 'Humidity', 'Light', 'CO2', 'HumidityRatio'])
@@ -60,15 +56,15 @@ if __name__ == '__main__':
 
     # Guassian MF
     mf_params_guassian = GaussianFMParamsCalculator(u_matrix, cntr, data).calculate()
-    # GaussianPlotter(mf_params_guassian).plot()
+    GaussianPlotter(mf_params_guassian, input_universes).plot()
 
     # Triangular MF
-    # mf_params_triangular = TriangularFMParamsCalculator(u_matrix, cntr, data, 0.5).calculate()
-    # TriangularPlotter(mf_params_triangular).plot()
+    mf_params_triangular = TriangularFMParamsCalculator(u_matrix, cntr, data, 0.5).calculate()
+    TriangularPlotter(mf_params_triangular, input_universes).plot()
 
     # Trapezoidal MF
-    # mf_params_trapezoidal = TrapezoidalFMParamsCalculator(u_matrix, cntr, data, 0.5, 0.5).calculate()
-    # TrapezoidalPlotter(mf_params_trapezoidal).plot()
+    mf_params_trapezoidal = TrapezoidalFMParamsCalculator(u_matrix, cntr, data, 0.5, 0.5).calculate()
+    TrapezoidalPlotter(mf_params_trapezoidal, input_universes).plot()
 
     # Generate Guassian Controller
 
@@ -76,7 +72,7 @@ if __name__ == '__main__':
     guassian_in_mf = gaussianFMGenerator.generate_input_mf()
     guassian_out_mf = gaussianFMGenerator.generate_output_mf()"""
 
-    gaussianFVTGenerator = GaussianFVTGenerator(input_universes, output_universe, mf_params_guassian)
+    """gaussianFVTGenerator = GaussianFVTGenerator(input_universes, output_universe, mf_params_guassian)
     gaussianAntecedents = gaussianFVTGenerator.generate_antecedents()
     gaussianConsequent = gaussianFVTGenerator.generate_consequent()
 
