@@ -20,6 +20,13 @@ class AbstractPlotter(object):
     def _get_x_y(self, cluster_key, f, feature):
         raise NotImplementedError("Please Implement this method")
 
+    def describe_mf(self):
+        raise NotImplementedError("Please Implement this method")
+
+    """def _get_features_name(self):
+        # raise NotImplementedError("Please Implement this method")
+        return self._mf_params['cluster1'].keys()"""
+
     # Plot the MFs
     def plot(self):
         plt.figure(figsize=(10, 6 * self._n_features))
@@ -76,6 +83,17 @@ class GaussianPlotter(AbstractPlotter):
         y = y / np.max(y)
         return x, y
 
+    def describe_mf(self):
+        descriptions = []
+        for i in range(self._n_cluster):
+            cluster_key = 'cluster' + str(i + 1)
+            for f in range(self._n_features):
+                mu = self._mf_params[cluster_key]['mean'][f]
+                sigma = np.sqrt(self._mf_params[cluster_key]['std'][f, f])
+                descriptions.append(
+                    f"Feature {f + 1} in Cluster {i + 1} follows a Gaussian distribution with mean {mu} and standard deviation {sigma}.")
+        return "\n".join(descriptions)
+
 
 # Plotter for Triangular MF
 class TriangularPlotter(AbstractPlotter):
@@ -91,10 +109,37 @@ class TriangularPlotter(AbstractPlotter):
         a = self._mf_params[cluster_key]['a'][f]
         b = self._mf_params[cluster_key]['b'][f]
         c = self._mf_params[cluster_key]['c'][f]
-        x = np.linspace(a, c, 1000)
+        # x = np.linspace(a, c, 1000)
+        min = a
+        max = c
+
+        # if a < self._input_universes[feature].min():
+        if a < 0:
+            min = self._input_universes[feature].min()
+
+        if c > self._input_universes[feature].max():
+            max = self._input_universes[feature].max()
+
+        x = np.linspace(min, max, 1000)
+
+        # x_real = np.linspace(a, c, 1000)
+
         y = np.maximum(np.minimum((x - a) / (b - a), (c - x) / (c - b)), 0)
+        # y = np.maximum(np.minimum((x_real - a) / (b - a), (c - x_real) / (c - b)), 0)
         y = y / np.max(y)
         return x, y
+
+    def describe_mf(self):
+        descriptions = []
+        for i in range(self._n_cluster):
+            cluster_key = 'cluster' + str(i + 1)
+            for f in range(self._n_features):
+                a = self._mf_params[cluster_key]['a'][f]
+                b = self._mf_params[cluster_key]['b'][f]
+                c = self._mf_params[cluster_key]['c'][f]
+                descriptions.append(
+                    f"Feature {f + 1} in Cluster {i + 1} follows a Triangular distribution with parameters a = {a}, b = {b}, and c = {c}.")
+        return "\n".join(descriptions)
 
 
 # Plotter for Trapezoidal MF
@@ -112,7 +157,34 @@ class TrapezoidalPlotter(AbstractPlotter):
         b = self._mf_params[cluster_key]['b'][f]
         c = self._mf_params[cluster_key]['c'][f]
         d = self._mf_params[cluster_key]['d'][f]
-        x = np.linspace(a, d, 1000)
+        # x = np.linspace(a, d, 1000)
+        min = a
+        max = d
+
+        # if a < self._input_universes[feature].min():
+        if a < 0:
+            min = self._input_universes[feature].min()
+
+        if d > self._input_universes[feature].max():
+            max = self._input_universes[feature].max()
+
+        x = np.linspace(min, max, 1000)
+
+        # x_real = np.linspace(a, d, 1000)
         y = np.maximum(np.minimum(np.minimum((x - a) / (b - a), (d - x) / (d - c)), 1), 0)
+        # y = np.maximum(np.minimum(np.minimum((x_real - a) / (b - a), (d - x_real) / (d - c)), 1), 0)
         y = y / np.max(y)
         return x, y
+
+    def describe_mf(self):
+        descriptions = []
+        for i in range(self._n_cluster):
+            cluster_key = 'cluster' + str(i + 1)
+            for f in range(self._n_features):
+                a = self._mf_params[cluster_key]['a'][f]
+                b = self._mf_params[cluster_key]['b'][f]
+                c = self._mf_params[cluster_key]['c'][f]
+                d = self._mf_params[cluster_key]['d'][f]
+                descriptions.append(
+                    f"Feature {f + 1} in Cluster {i + 1} follows a Trapezoidal distribution with parameters a = {a}, b = {b}, c = {c}, and d = {d}.")
+        return "\n".join(descriptions)

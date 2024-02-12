@@ -1,5 +1,7 @@
-import numpy as np
+import time
 
+import numpy as np
+from sklearn.metrics import silhouette_score
 
 class AbstractFCM:
 
@@ -25,8 +27,6 @@ class AbstractFCM:
 
         # Initializes the cluster centers (v) with random values.
         self._v = self._initialize_v()
-
-
 
     # Initializes the U-matrix (membership matrix) with random values between 0 and 1.
     def _initialize_u(self):
@@ -54,10 +54,16 @@ class AbstractFCM:
         # initialize v
         # self._initialize_v()
 
+        print("Fuzzy C-means algorithm started...")
+        start_time = time.time()  # Capture the start time
+
         # iterative update
         for t in range(self._max_iter):  # Performs the fuzzy C-means algorithm for a maximum number of iterations.
 
-            print("Iteration: ", t)
+            # print("Iteration: ", t)
+            elapsed_time = time.time() - start_time  # Calculate elapsed time
+            print(f"\rIteration: {t}, Elapsed Time: {elapsed_time:.2f} seconds", end="")
+            # self.print_progress_bar(t + 1, self._max_iter, prefix='Progress:', suffix='Complete', length=50)
 
             # save previous u and v
             u_prev = self._u.copy()  # Saves the current U-matrix before updating it.
@@ -75,7 +81,20 @@ class AbstractFCM:
                 # centers is less than the error tolerance,
                 break  # break the loop as the algorithm has converged.
 
+        print("\nFuzzy C-means algorithm finished.\n")
+
         return self._u, self._v  # Returns the final U-matrix and cluster centers.
+
+    def plot_cluster(self):
+        # TODO: Implement this method
+        raise NotImplementedError("Please Implement this method")
+
+    def jaccard_coefficient(self):
+        # TODO: Implement this method
+        raise NotImplementedError("Please Implement this method")
+
+    def silhouette_score(self):
+        raise NotImplementedError("Please Implement this method")
 
 
 class ConcreteFCM(AbstractFCM):
@@ -108,3 +127,13 @@ class ConcreteFCM(AbstractFCM):
         for i in range(self._c):  # For each cluster,
             self._v[i] = np.sum(self._u[:, i].reshape(self._n, 1) * self._data, axis=0) / np.sum(
                 self._u[:, i])  # update the cluster center using the FCM formula.
+
+    def silhouette_score(self):
+        # Convert fuzzy memberships to hard memberships by assigning each sample to the cluster with the highest
+        # membership
+        labels = np.argmax(self._u, axis=1)
+
+        # Use sklearn's silhouette_score function
+        score = silhouette_score(self._data, labels)
+
+        return score

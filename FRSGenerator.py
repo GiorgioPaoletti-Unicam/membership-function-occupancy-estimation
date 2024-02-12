@@ -13,11 +13,52 @@ class AbstractFRSGenerator:
     def __init__(self, input_antecedents, output_consequent):
         self._input_antecedents = input_antecedents
         self._output_consequent = output_consequent
-        self._feature_names = self._feature_names = list(input_antecedents.keys())
+        self._feature_names = list(input_antecedents.keys())
         self._fuzzy_rules = []
 
     def generate(self):
         raise NotImplementedError("Please Implement this method")
+
+
+class JMatrixFRSGenerator(AbstractFRSGenerator):
+
+    def __init__(self, input_antecedents, output_consequent, j_matrix):
+        super().__init__(input_antecedents, output_consequent)
+        self._j_matrix = j_matrix
+
+    def generate(self):
+
+        for i, row in enumerate(self._j_matrix):  # Iterate over each rule
+            # conditions = []
+            conditions = None
+
+            for f in range(len(self._feature_names)):  # For each feature
+                # If the generic element is 0, indicates that the fuzzy set A_f,j_m,f that has been
+                # selected for variable X_f in rule Rm correspond to the 'don't care' condition
+                if row[f] == 0:
+                    continue
+                else:
+                    linguistic_variable = self._feature_names[f]
+                    fuzzy_set = 'cluster' + str(row[f])
+                # conditions.append(self._input_antecedents[linguistic_variable][fuzzy_set])
+                if conditions is None:
+                    conditions = self._input_antecedents[linguistic_variable][fuzzy_set]
+                else:
+                    conditions = conditions & self._input_antecedents[linguistic_variable][fuzzy_set]
+
+            # The last column of J corresponds to consequent's membership function
+            consequent_mf_name = 'cluster' + str(row[-1])
+            # rule = ctrl.Rule(ctrl.And(*conditions), self._output_consequent[consequent_mf_name])
+            # rule = ctrl.Rule(conditions, self._output_consequent[consequent_mf_name], label='rule_' + str(i+1))
+            try:
+                rule = ctrl.Rule(conditions, self._output_consequent[consequent_mf_name])
+            except ValueError:
+                print("ciao")
+            else:
+                self._fuzzy_rules.append(rule)
+            # self._fuzzy_rules.append(rule)
+
+        return self._fuzzy_rules
 
 
 class ConcreteFRSGenerator(AbstractFRSGenerator):
@@ -71,8 +112,8 @@ class ConcreteFRSGenerator(AbstractFRSGenerator):
 
         # Rule 3 if the light is not cluster1 AND sound is not cluster 1 AND PIR is 1 then the output is not cluster1
         self._fuzzy_rules.append(ctrl.Rule(fuzz.fuzzy_not(self._input_antecedents['Light']['cluster1']) &
-                          fuzz.fuzzy_not(self._input_antecedents['Sound']['cluster1']) &
-                          PIR_antecedent['1'],
-                          fuzz.fuzzy_not(self._output_consequent['cluster1'])))
+                                           fuzz.fuzzy_not(self._input_antecedents['Sound']['cluster1']) &
+                                           PIR_antecedent['1'],
+                                           fuzz.fuzzy_not(self._output_consequent['cluster1'])))
 
         return self._fuzzy_rules
